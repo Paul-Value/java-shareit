@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
         isExists(userDto.getId());
         isExists(userDto.getEmail());
         User user = userMapper.dtoToModel(userDto);
-        return userMapper.modelToDto(user);
+        return userMapper.modelToDto(userRepository.update(user));
     }
 
     @Override

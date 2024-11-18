@@ -28,11 +28,11 @@ public class InMemoryUserRepository implements UserRepository {
         log.debug("==> Update user {}", user);
         User oldUser = users.get(user.getId());
         String name = user.getName();
-        if (name != null) {
+        if (name != null && !name.isBlank()) {
             oldUser.setName(name);
         }
         String email = user.getEmail();
-        if (email != null) {
+        if (email != null && !email.isBlank()) {
             oldUser.setEmail(email);
             emails.add(email);
         }
@@ -41,9 +41,9 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User get(Long userId) {
+    public Optional<User> get(Long userId) {
         log.debug("==> Getting user id = {}", userId);
-        User user = users.get(userId);
+        Optional<User> user = Optional.ofNullable(users.get(userId));
         log.debug("<== User received {}", user);
         return user;
     }

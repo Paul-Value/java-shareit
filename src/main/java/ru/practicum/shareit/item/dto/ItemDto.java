@@ -3,10 +3,14 @@ package ru.practicum.shareit.item.dto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.Marker;
 
 @Data
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class ItemDto {
     @Null(groups = Marker.Create.class)
     private Long id;

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -11,25 +10,25 @@ import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.List;
 
+import static ru.practicum.shareit.user.UserIdHttpHeader.USER_ID_HEADER;
+
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
 @Validated
 public class ItemController {
     private final ItemService itemService;
-    private final String itemHeader = "X-Sharer-User-Id";
 
     @PostMapping
-    @Validated(Marker.Create.class)
-    public ItemDto create(@RequestHeader(itemHeader) @NotNull @Positive Long ownerId,
-                          @RequestBody @Valid ItemDto dto) {
+    public ItemDto create(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId,
+                          @RequestBody @Validated(Marker.Create.class) ItemDto dto) {
         dto.setOwnerId(ownerId);
         return itemService.save(ownerId, dto);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestHeader(itemHeader) @NotNull @Positive Long ownerId,
-                          @PathVariable @NotNull @Positive Long itemId,
+    public ItemDto update(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId,
+                          @PathVariable @Positive Long itemId,
                           @RequestBody @Valid ItemDto dto) {
         dto.setId(itemId);
         dto.setOwnerId(ownerId);
@@ -37,13 +36,13 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto get(@RequestHeader(itemHeader) @NotNull @Positive Long ownerId,
-                       @PathVariable @NotNull @Positive Long itemId) {
+    public ItemDto get(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId,
+                       @PathVariable @Positive Long itemId) {
         return itemService.get(ownerId, itemId);
     }
 
     @GetMapping
-    List<ItemDto> getAllForUser(@RequestHeader(itemHeader) @NotNull @Positive Long ownerId) {
+    List<ItemDto> getAllForUser(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId) {
         return itemService.getAllForUser(ownerId);
     }
 

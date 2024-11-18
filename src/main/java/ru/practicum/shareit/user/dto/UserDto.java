@@ -1,18 +1,21 @@
 package ru.practicum.shareit.user.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.Marker;
 
 @Data
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserDto {
     @Null
     private Long id;
-    @NotNull(groups = Marker.Create.class)
+    @NotBlank(groups = Marker.Create.class)
     private String name;
     @NotNull(groups = Marker.Create.class)
-    @Email(groups = Marker.Create.class)
+    @NotEmpty(groups = Marker.Create.class)
+    @Email(groups = {Marker.Create.class, Marker.Update.class})
     private String email;
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.AlreadyExistException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -18,28 +19,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto save(UserDto userDto) {
         isExists(userDto.getEmail());
-        User user = userMapper.dtoToModel(userDto);
-        return userMapper.modelToDto(userRepository.save(user));
+        User user = userMapper.toEntity(userDto);
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
     public UserDto update(UserDto userDto) {
         isExists(userDto.getId());
         isExists(userDto.getEmail());
-        User user = userMapper.dtoToModel(userDto);
-        return userMapper.modelToDto(userRepository.update(user));
+        User user = userMapper.toEntity(userDto);
+        return userMapper.toDto(userRepository.update(user));
     }
 
     @Override
     public UserDto get(Long id) {
         isExists(id);
-        return userMapper.modelToDto(userRepository.get(id));
+        User user = userRepository.get(id).orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+        return userMapper.toDto(user);
     }
 
     @Override
     public List<UserDto> getAll() {
         return userRepository.getAll().stream()
-                .map(userMapper::modelToDto)
+                .map(userMapper::toDto)
                 .toList();
     }
 

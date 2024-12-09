@@ -12,8 +12,7 @@ import ru.practicum.shareit.exception.UnavailableItemException;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,8 +24,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemService itemService;
     private final UserService userService;
-    private final UserMapper userMapper;
-
 
     @Override
     @Transactional
@@ -35,8 +32,8 @@ public class BookingServiceImpl implements BookingService {
         if (!itemDto.getAvailable()) {
             throw new UnavailableItemException(String.format("Item with id %d not available", itemDto.getId()));
         }
-        User booker = userMapper.toEntity(userService.get(dto.getBookerId()));
-        Booking booking = BookingMapper.dtoToModel(dto, itemDto, booker);
+        UserDto bookerDto = userService.get(dto.getBookerId());
+        Booking booking = BookingMapper.dtoToModel(dto, itemDto, bookerDto);
         return BookingMapper.modelToResponseDto(bookingRepository.save(booking));
     }
 

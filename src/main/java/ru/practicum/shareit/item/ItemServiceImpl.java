@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.NotStartedBookingException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -29,7 +30,6 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @Override
     @Transactional
@@ -76,26 +76,6 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item not found with id: " + itemId));
         LocalDateTime now = LocalDateTime.now();
-        /*List<Comment> comments = commentRepository.findAllByItemIdOrderById(itemId);
-        List<CommentShortDto> commentsDtos = comments.stream()
-                .map(CommentMapper::modelToShortDto)
-                .toList();*/
-        /*ItemDto itemDto = itemMapper.toDto(item);
-
-        List<Booking> bookings = bookingRepository.findAllByItemId(itemId);
-
-        Optional<Booking> lastbooking = bookings.stream()
-                .filter(booking -> booking.getStart().isAfter(now))
-                .max(Comparator.comparing(Booking::getEnd));
-        BookingDto lastBookingDto = BookingMapper.modelToDtoResponse(lastbooking.get());
-        itemDto.setLastBooking(lastBookingDto);
-
-        Optional<Booking> nextBooking = bookings.stream()
-                .filter(booking -> booking.getStart().isAfter(now))
-                .min(Comparator.comparing(Booking::getStart));
-        BookingDto nextBookingDto = BookingMapper.modelToDtoResponse(nextBooking.get());
-        itemDto.setNextBooking(nextBookingDto);*/
-        //return itemDto;
         List<Booking> bookings = bookingRepository.findAllByItemIdAndEndBeforeOrderByEndDesc(item.getId(), now);
         Map<String, BookingDto> bookingDtoMap = getLastAndNextBookings(bookings, now);
         ItemDto itemDto = ItemMapper.modelToDto(item);
@@ -105,7 +85,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemCommentsDtoResponse> getAllForUser(Long ownerId) {
+    public List<ItemCommentsDtoResponse> getAllByOwnerId(Long ownerId) {
         userService.isExists(ownerId);
         LocalDateTime now = LocalDateTime.now();
         List<Item> items = itemRepository.findAllByOwnerId(ownerId);
@@ -166,13 +146,13 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public CommentResponseDto createComment(CommentCreateDto dto, long userId, long itemId) {
         bookingRepository.findByBookerIdAndItemIdOrderByStart(userId, itemId).stream()
-                .filter(comment -> comment.getEnd().isBefore(dto.getCreated()))
+                .filter(booking -> booking.getEnd().isBefore(dto.getCreated()))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException(String.format("Booking for item with id %d" +
-                        " by user with id %d is not found", itemId, userId)));
+                .orElseThrow(() -> new NotStartedBookingException(String.format("Booking for item with id %d by user " +
+                        "with id %d is not started yet", itemId, userId)));
 
         Comment comment = CommentMapper.dtoToModel(dto);
-        User user = userMapper.toEntity(userService.get(userId));
+        User user = UserMapper.dtoToModel(userService.get(userId));
         comment.setAuthor(user);
         Item item = itemRepository.findById(itemId).orElse(null);
         comment.setItem(item);
@@ -184,7 +164,7 @@ public class ItemServiceImpl implements ItemService {
         isExist(itemId);
         LocalDateTime now = LocalDateTime.now();
         Item item = itemRepository.findById(itemId).get();
-        List<CommentResponseDto> commentDtos = commentRepository.findAllByItemOwnerId(itemId).stream()
+        List<CommentResponseDto> commentDtos = commentRepository.findAllByItemIdOrderById(itemId).stream()
                 .map(CommentMapper::modelToDto)
                 .toList();
         Map<String, BookingDto> bookingDtoMap = null;

@@ -40,7 +40,7 @@ public class ItemController {
 
     @GetMapping
     List<ItemCommentsDtoResponse> getAll(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId) {
-        return itemService.getAllForUser(ownerId);
+        return itemService.getAllByOwnerId(ownerId);
     }
 
     @GetMapping("/search")

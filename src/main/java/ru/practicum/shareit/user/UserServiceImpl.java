@@ -18,13 +18,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
 
     @Override
     public UserDto create(UserCreateDto userDto) {
         isExists(userDto.getEmail());
-        User user = userMapper.toEntity(userDto);
-        return userMapper.toDto(userRepository.save(user));
+        User user = UserMapper.dtoToModel(userDto);
+        return UserMapper.modelToDto(userRepository.save(user));
     }
 
     @Override
@@ -39,21 +38,21 @@ public class UserServiceImpl implements UserService {
         if (userUpdateDto.getName() != null) {
             user.setName(userUpdateDto.getName());
         }
-        return userMapper.toDto(userRepository.save(user));
+        return UserMapper.modelToDto(userRepository.save(user));
     }
 
     @Override
     public UserDto get(Long id) {
         isExists(id);
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found with id: " + id));
-        return userMapper.toDto(user);
+        return UserMapper.modelToDto(user);
     }
 
     @Override
     public List<UserDto> getAll() {
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
         return userRepository.findAll().stream()
-                .map(userMapper::toDto)
+                .map(UserMapper::modelToDto)
                 .toList();
     }
 

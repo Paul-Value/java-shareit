@@ -11,7 +11,7 @@ public interface ItemService {
 
     ItemDto get(Long ownerId, Long itemId);
 
-    List<ItemCommentsDtoResponse> getAllForUser(Long ownerId);
+    List<ItemCommentsDtoResponse> getAllByOwnerId(Long ownerId);
 
     List<ItemDto> search(String text);
 

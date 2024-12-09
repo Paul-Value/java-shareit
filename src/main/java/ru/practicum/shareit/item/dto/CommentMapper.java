@@ -6,13 +6,12 @@ import ru.practicum.shareit.user.dto.UserMapper;
 
 @UtilityClass
 public class CommentMapper {
-    UserMapper userMapper;
 
     public static CommentResponseDto modelToDto(Comment comment) {
         CommentResponseDto dto = new CommentResponseDto();
         dto.setId(comment.getId());
         dto.setText(comment.getText());
-        dto.setAuthor(userMapper.toDto(comment.getAuthor()));
+        dto.setAuthor(UserMapper.modelToDto(comment.getAuthor()));
         dto.setItem(ItemMapper.modelToDto(comment.getItem()));
         dto.setCreated(comment.getCreated());
         dto.setAuthorName(dto.getAuthor().getName());

@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface BookingService {
     BookingDto save(BookingCreateDto dto);
+
     BookingDto updateStatusBooking(long bookingId, long userId, boolean approved);
 
     BookingDto get(long bookingId, long userId);

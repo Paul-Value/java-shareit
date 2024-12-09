@@ -5,8 +5,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.Marker;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.*;
 
 import java.util.List;
 
@@ -16,38 +15,55 @@ import static ru.practicum.shareit.user.UserIdHttpHeader.USER_ID_HEADER;
 @RequestMapping("/items")
 @RequiredArgsConstructor
 @Validated
+
 public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
     public ItemDto create(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId,
-                          @RequestBody @Validated(Marker.Create.class) ItemDto dto) {
-        dto.setOwnerId(ownerId);
+                          @RequestBody @Valid ItemCreateDto dto) {
         return itemService.save(ownerId, dto);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto update(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId,
                           @PathVariable @Positive Long itemId,
-                          @RequestBody @Valid ItemDto dto) {
-        dto.setId(itemId);
-        dto.setOwnerId(ownerId);
-        return itemService.update(ownerId, dto);
+                          @RequestBody @Valid ItemUpdateDto dto) {
+
+        return itemService.update(ownerId, dto, itemId);
     }
 
-    @GetMapping("/{itemId}")
-    public ItemDto get(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId,
-                       @PathVariable @Positive Long itemId) {
-        return itemService.get(ownerId, itemId);
-    }
+    /*@GetMapping
+    public List<ItemCommentsDtoResponse> getAll(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId) {
+        return itemService.getAll(ownerId);
+    }*/
 
     @GetMapping
-    List<ItemDto> getAllForUser(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId) {
+    List<ItemCommentsDtoResponse> getAll(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId) {
         return itemService.getAllForUser(ownerId);
     }
 
     @GetMapping("/search")
     List<ItemDto> search(@RequestParam("text") String text) {
         return itemService.search(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentResponseDto createComment(@RequestHeader(USER_ID_HEADER)
+                                            @Positive long authorId,
+                                            @PathVariable long itemId,
+                                            @RequestBody
+                                            @Valid CommentCreateDto dto) {
+        return itemService.createComment(dto, authorId, itemId);
+    }
+
+    @GetMapping("/{itemId}")
+    public ItemCommentsDtoResponse getItemWithComments(@RequestHeader(USER_ID_HEADER)
+                                                       @Positive
+                                                       long userId,
+                                                       @PathVariable
+                                                       @Positive
+                                                       long itemId) {
+        return itemService.getWithComments(itemId, userId);
     }
 }

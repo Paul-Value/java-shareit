@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.Marker;
+import ru.practicum.shareit.booking.dto.BookingDto;
 
 @Data
 @AllArgsConstructor
@@ -21,4 +22,6 @@ public class ItemDto {
     private Long ownerId;
     @NotNull(groups = Marker.Create.class)
     private Boolean available;
+    private BookingDto lastBooking;
+    private BookingDto nextBooking;
 }

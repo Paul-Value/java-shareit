@@ -5,8 +5,9 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.Marker;
+import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 import java.util.List;
 
@@ -18,15 +19,15 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserDto save(@RequestBody @Validated(Marker.Create.class) UserDto userDto) {
-        return userService.save(userDto);
+    public UserDto save(@RequestBody @Valid UserCreateDto userDto) {
+        return userService.create(userDto);
     }
 
     @PatchMapping("/{id}")
     UserDto update(@Positive @PathVariable Long id,
-                   @RequestBody @Valid UserDto userDto) {
+                   @RequestBody @Valid UserUpdateDto userDto) {
         userDto.setId(id);
-        return userService.update(userDto);
+        return userService.update(userDto, id);
     }
 
     @GetMapping

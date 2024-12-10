@@ -4,8 +4,21 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.dto.CommentCreateDto;
+import ru.practicum.shareit.item.dto.CommentResponseDto;
+import ru.practicum.shareit.item.dto.ItemCommentsDtoResponse;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 
 import java.util.List;
 
@@ -32,11 +45,6 @@ public class ItemController {
 
         return itemService.update(ownerId, dto, itemId);
     }
-
-    /*@GetMapping
-    public List<ItemCommentsDtoResponse> getAll(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId) {
-        return itemService.getAll(ownerId);
-    }*/
 
     @GetMapping
     List<ItemCommentsDtoResponse> getAll(@RequestHeader(USER_ID_HEADER) @Positive Long ownerId) {

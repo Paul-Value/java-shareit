@@ -13,13 +13,14 @@ import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserService;
-import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -29,12 +30,14 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
-    private final UserService userService;
+    //private final UserService userService;
 
     @Override
     @Transactional
     public ItemDto save(Long ownerId, ItemCreateDto dto) {
-        userService.isExists(ownerId);
+        if (!userRepository.existsById(ownerId)) {
+            throw new NotFoundException("User with id: " + ownerId + " not found");
+        }
         Item item = ItemMapper.dtoToModel(dto);
         item.setOwnerId(userRepository.findById(ownerId).get().getId());
         return ItemMapper.modelToDto(itemRepository.save(item));
@@ -46,7 +49,9 @@ public class ItemServiceImpl implements ItemService {
         if (!itemRepository.existsItemForUser(ownerId,itemId)) {
             throw new NotFoundException("Item id = " + itemId + " not found for user id = " + ownerId);
         }
-        userService.isExists(ownerId);
+        if (!userRepository.existsById(ownerId)) {
+            throw new NotFoundException("User with id: " + ownerId + " not found");
+        }
         isExist(itemId);
         Item item = ItemMapper.dtoToModel(dto);
         Item itemFromRep = itemRepository.findById(itemId).get();
@@ -72,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto get(Long ownerId, Long itemId) {
-        userService.get(ownerId);
+        userRepository.findById(ownerId);
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item not found with id: " + itemId));
         LocalDateTime now = LocalDateTime.now();
@@ -86,7 +91,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemCommentsDtoResponse> getAllByOwnerId(Long ownerId) {
-        userService.isExists(ownerId);
+        if (!userRepository.existsById(ownerId)) {
+            throw new NotFoundException("User with id: " + ownerId + " not found");
+        }
         LocalDateTime now = LocalDateTime.now();
         List<Item> items = itemRepository.findAllByOwnerId(ownerId);
         List<Booking> bookings = bookingRepository.findAllByItemIdAndEndBeforeOrderByEndDesc(ownerId, now);
@@ -152,7 +159,7 @@ public class ItemServiceImpl implements ItemService {
                         "with id %d is not started yet", itemId, userId)));
 
         Comment comment = CommentMapper.dtoToModel(dto);
-        User user = UserMapper.dtoToModel(userService.get(userId));
+        User user = userRepository.findById(userId).orElse(null);
         comment.setAuthor(user);
         Item item = itemRepository.findById(itemId).orElse(null);
         comment.setItem(item);

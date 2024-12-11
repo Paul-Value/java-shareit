@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class, UnavailableItemException.class,
+            NotStartedBookingException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ValidationErrorResponse methodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -35,6 +36,13 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleAlreadyExistException(AlreadyExistException e) {
         log.info("Already exist: {}", e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler({AccessException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAccessException(AccessException e) {
+        log.info("Access denied: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 

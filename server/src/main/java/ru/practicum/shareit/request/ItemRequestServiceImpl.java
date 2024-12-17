@@ -7,7 +7,6 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,7 +19,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequestDto create(ItemRequestDto itemRequestDto) {
         log.debug("Create ItemRequest, ItemRequestDto: {}", itemRequestDto);
         ItemRequest itemRequest = ItemRequestMapper.dtoToModel(itemRequestDto);
-        itemRequest.setCreated(LocalDateTime.now());
+        //itemRequest.setCreated(LocalDateTime.now());
         ItemRequestDto result = ItemRequestMapper.modelToDto(itemRequestRepository.save(itemRequest));
         log.debug("ItemRequest created: {}", result);
         return result;
@@ -28,7 +27,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> findAllByRequester(long requesterId) {
-        log.debug("Find all item's requests by requester, Requestor: {}", requesterId);
+        log.debug("Find all item's requests by requester, Requester: {}", requesterId);
         List<ItemRequest> listItemRequests = itemRequestRepository.findAllByRequesterIdOrderByCreatedDesc(requesterId);
         log.debug("Find all item's requests by requester, List of models {}", listItemRequests);
         List<ItemRequestDto> result = listItemRequests.stream()

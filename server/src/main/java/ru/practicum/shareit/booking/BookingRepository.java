@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(value = "select b from Booking b where b.id = ?1 and (b.booker.id = ?2 or b.item.ownerId = ?2)")
-    Optional<Booking> findByBookingId(@Param("bookingId") long bookingId, @Param("userId") long userId);
+    Optional<Booking> findByBookingId(long bookingId, long userId);
 
     List<Booking> findAllByBookerId(Long id);
 
@@ -38,8 +38,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Modifying
     @Transactional
     @Query(value = "update Booking b set b.status = ?3 where b.id = ?1 and b.item.ownerId = ?2")
-    void updateBooking(@Param("bookingId") long bookingId, @Param("ownerId") long ownerId,
-                       @Param("status") BookingStatus status);
+    void updateBooking(long bookingId, long ownerId, BookingStatus status);
 
     @Query(value = "select exists(select b.id from Booking b where b.id = ?1 and b.item.ownerId = ?2)")
     boolean existsByOwnerId(long bookingId, long ownerId);
@@ -52,6 +51,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByItemOwnerIdAndStatusOrderByEndDesc(long ownerId, BookingStatus status);
 
-    @Query(value = "select b from Booking b where b.item.id = ?1 and (?2 between b.start and b.end) order by b.end desc")
-    List<Booking> findAllByItemOwnerIdAndNowBetweenOrderByEndDesc(@Param("ownerId") long ownerId, @Param("now") LocalDateTime now);
+    @Query(value = "select b from Booking b where b.item.ownerId = ?1 and (?2 between b.start and b.end) order by b.end desc")
+    List<Booking> findAllByItemOwnerIdAndNowBetweenOrderByEndDesc(long ownerId, LocalDateTime now);
 }

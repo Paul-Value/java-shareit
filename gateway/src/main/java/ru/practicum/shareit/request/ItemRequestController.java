@@ -14,9 +14,9 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.UserIdHttpHeader;
 
 @Controller
-@RequiredArgsConstructor
-@RequestMapping("/request")
+@RequestMapping("/requests")
 @Validated
+@RequiredArgsConstructor
 @Slf4j
 public class ItemRequestController {
     private final ItemRequestClient itemRequestClient;
@@ -24,14 +24,14 @@ public class ItemRequestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Validated(Marker.Create.class)
-    public ResponseEntity<Object> create(@RequestHeader(name = UserIdHttpHeader.USER_ID_HEADER) @Positive long requesterId,
+    public ResponseEntity<Object> create(@RequestHeader(UserIdHttpHeader.USER_ID_HEADER) @Positive long requesterId,
                                          @Valid @RequestBody ItemRequestDto itemRequestDto) {
         log.info("Create request: {}", itemRequestDto);
         return itemRequestClient.create(itemRequestDto, requesterId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> findAllByRequester(@RequestHeader(name = UserIdHttpHeader.USER_ID_HEADER)
+    public ResponseEntity<Object> findAllByRequester(@RequestHeader(UserIdHttpHeader.USER_ID_HEADER)
                                                      @Positive long requesterId) {
         log.info("Find all requests by requester: {}", requesterId);
         return itemRequestClient.findAllByRequester(requesterId);

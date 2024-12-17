@@ -20,7 +20,7 @@ public interface ItemService {
 
     List<ItemDto> search(String text);
 
-    void isExist(Long itemId);
+    boolean isExist(Long itemId);
 
     CommentResponseDto createComment(CommentCreateDto dto, long authorId, long itemId);
 

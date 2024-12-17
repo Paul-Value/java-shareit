@@ -8,7 +8,7 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.NotStartedBookingException;
+import ru.practicum.shareit.exception.NotValidException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -96,7 +96,7 @@ public class ItemServiceImpl implements ItemService {
         }
         LocalDateTime now = LocalDateTime.now();
         List<Item> items = itemRepository.findAllByOwnerId(ownerId);
-        List<Booking> bookings = bookingRepository.findAllByItemIdAndEndBeforeOrderByEndDesc(ownerId, now);
+        List<Booking> bookings = bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByEndDesc(ownerId, now);
         Map<Item, List<Booking>> itemBookingsMap = new HashMap<>();
 
         for (Booking booking: bookings) {
@@ -155,8 +155,7 @@ public class ItemServiceImpl implements ItemService {
         bookingRepository.findByBookerIdAndItemIdOrderByStart(userId, itemId).stream()
                 .filter(booking -> booking.getEnd().isBefore(dto.getCreated()))
                 .findFirst()
-                .orElseThrow(() -> new NotStartedBookingException(String.format("Booking for item with id %d by user " +
-                        "with id %d is not started yet", itemId, userId)));
+                .orElseThrow(() -> new NotValidException("Fail to create comment"));
 
         Comment comment = CommentMapper.dtoToModel(dto);
         User user = userRepository.findById(userId).orElse(null);
@@ -183,11 +182,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void isExist(Long itemId) {
+    public boolean isExist(Long itemId) {
         boolean exists = itemRepository.existsById(itemId);
         if (!exists) {
             throw new NotFoundException("Item not found with id " + itemId);
         }
+        return true;
     }
 
     public Map<String, BookingDto> getLastAndNextBookings(List<Booking> bookings, LocalDateTime now) {

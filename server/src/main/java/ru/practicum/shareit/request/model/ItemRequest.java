@@ -2,7 +2,7 @@ package ru.practicum.shareit.request.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.practicum.shareit.item.model.ItemFeedback;
+import ru.practicum.shareit.item.model.ItemForRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @ToString
 @Entity
-@Table(name = "request")
+@Table(name = "requests")
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,5 +22,5 @@ public class ItemRequest {
     private LocalDateTime created;
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
-    private List<ItemFeedback> items;
+    private List<ItemForRequest> items;
 }

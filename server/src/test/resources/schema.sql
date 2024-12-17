@@ -11,10 +11,10 @@ CREATE TABLE IF NOT EXISTS requests
 (
     id           BIGINT GENERATED ALWAYS AS IDENTITY NOT NULL,
     description  VARCHAR(512),
-    requestor_id BIGINT                              NOT NULL,
+    requester_id BIGINT                              NOT NULL,
     created      TIMESTAMP                           NOT NULL,
     CONSTRAINT pk_request PRIMARY KEY (id),
-    CONSTRAINT fk_user FOREIGN KEY (requestor_id) REFERENCES users
+    CONSTRAINT fk_user FOREIGN KEY (requester_id) REFERENCES users
 );
 
 CREATE TABLE IF NOT EXISTS items

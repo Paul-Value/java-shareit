@@ -7,11 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.Marker;
 import ru.practicum.shareit.item.dto.CommentDtoCreate;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.user.UserIdHttpHeader;
 
 @Controller
@@ -23,31 +22,30 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Validated(Marker.Create.class)
     public ResponseEntity<Object> create(@RequestHeader(UserIdHttpHeader.USER_ID_HEADER) @Positive long ownerId,
-                                         @RequestBody @Valid ItemDto dto) {
-        log.info("Create item: {}, owner:{}", dto, ownerId);
+                                         @RequestBody @Valid ItemCreateDto dto) {
+        log.info("Create item:{}, owner:{}", dto, ownerId);
         return itemClient.create(ownerId, dto);
     }
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> update(@RequestHeader(UserIdHttpHeader.USER_ID_HEADER) @Positive long ownerId,
-                                         @PathVariable @Positive long itemId, @RequestBody @Valid ItemDto dto) {
-        log.info("Update item: {}, item id:{}, owner:{}", dto, itemId, ownerId);
+                                         @PathVariable @Positive long itemId, @RequestBody @Valid ItemUpdateDto dto) {
+        log.info("Update item:{}, item id:{}, owner:{}", dto, itemId, ownerId);
         return itemClient.update(ownerId, itemId, dto);
     }
 
     @GetMapping
     public ResponseEntity<Object> findAllByOwnerId(@RequestHeader(UserIdHttpHeader.USER_ID_HEADER)
                                                    @Positive long ownerId) {
-        log.info("Find all items by ownerId: {}", ownerId);
+        log.info("Find all items by ownerId:{}", ownerId);
         return itemClient.findAllByOwnerId(ownerId);
     }
 
     @GetMapping("/{itemId}")
     public ResponseEntity<Object> findItemWithComments(@RequestHeader(UserIdHttpHeader.USER_ID_HEADER)
                                                        @Positive long userId, @PathVariable @Positive long itemId) {
-        log.info("Find item with comments, itemId: {}, userId:{}", itemId, userId);
+        log.info("Find item with comments, itemId:{}, userId:{}", itemId, userId);
         return itemClient.findItemWithComments(itemId, userId);
     }
 

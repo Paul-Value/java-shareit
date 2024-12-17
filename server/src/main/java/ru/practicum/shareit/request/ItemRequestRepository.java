@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> {
     @Query("select ir from ItemRequest ir left join fetch ir.items where ir.requesterId = ?1 order by ir.created desc")
-    List<ItemRequest> findAllByRequesterIdOrderByCreatedDesc(@Param("requesterId") long requesterId);
+    List<ItemRequest> findAllByRequesterIdOrderByCreatedDesc(@Param("requesterId") long requesterId) ;
 
     @Query("select ir from ItemRequest as ir order by ir.created desc")
     List<ItemRequest> findAllOrderByCreatedDesc();

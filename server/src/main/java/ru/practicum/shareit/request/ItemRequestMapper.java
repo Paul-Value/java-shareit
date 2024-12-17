@@ -1,7 +1,7 @@
 package ru.practicum.shareit.request;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.item.dto.ItemFeedbackDto;
+import ru.practicum.shareit.item.dto.ItemForRequestDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -20,17 +20,17 @@ public class ItemRequestMapper {
     }
 
     public ItemRequestDto modelToDto(ItemRequest model) {
-        List<ItemFeedbackDto> listItemFeedbackDto = null;
+        List<ItemForRequestDto> listItemForRequestDto = null;
         if (model.getItems() != null) {
-            listItemFeedbackDto = model.getItems().stream()
-                    .map(ItemMapper::modelToDtoFeedback)
+            listItemForRequestDto = model.getItems().stream()
+                    .map(ItemMapper::modelToDtoForRequest)
                     .toList();
         }
         return ItemRequestDto.builder()
                 .id(model.getId())
                 .description(model.getDescription())
                 .created(model.getCreated())
-                .items(listItemFeedbackDto)
+                .items(listItemForRequestDto)
                 .requesterId(model.getRequesterId())
                 .build();
     }

@@ -21,7 +21,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @Table(name = "items")
-public class ItemFeedback {
+public class ItemForRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

@@ -7,9 +7,8 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class ItemCreateDto {
+public class ItemUpdateDto {
     private String name;
     private String description;
     private Boolean available;
-    private Long requestId;
 }

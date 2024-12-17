@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.Marker;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserCreateDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,20 +23,19 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Validated(Marker.Create.class)
-    public ResponseEntity<Object> create(@RequestBody @Valid UserDto userDto) {
-        log.info("Create user: {}", userDto);
-        return userClient.create(userDto);
+    public ResponseEntity<Object> create(@RequestBody @Valid UserCreateDto userCreateDto) {
+        log.info("Create user: {}", userCreateDto);
+        return userClient.create(userCreateDto);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> update(@NotNull @Positive @PathVariable Long id,
-                                         @RequestBody @Valid UserDto userDto) {
-        return userClient.update(id, userDto);
+    public ResponseEntity<Object> update(@NotNull @Positive @PathVariable(name = "id") Long id,
+                                         @RequestBody @Valid UserUpdateDto userUpdateDto) {
+        return userClient.update(id, userUpdateDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> findById(@PathVariable @NotNull @Positive Long id) {
+    public ResponseEntity<Object> findById(@PathVariable(name = "id") @NotNull @Positive Long id) {
         return userClient.findById(id);
     }
 
@@ -47,7 +46,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable @NotNull @Positive Long id) {
+    public void delete(@PathVariable(name = "id") @NotNull @Positive Long id) {
         userClient.delete(id);
     }
 }

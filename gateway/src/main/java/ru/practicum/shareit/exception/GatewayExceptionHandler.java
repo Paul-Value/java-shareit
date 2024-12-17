@@ -32,4 +32,11 @@ public class GatewayExceptionHandler {
         log.warn("Server ERROR ", e);
         return new ErrorResponse(e.getMessage(), Arrays.toString(e.getStackTrace()));
     }
+
+    @ExceptionHandler({NotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFound(Exception e) {
+        log.warn("Not found ", e);
+        return new ErrorResponse(e.getMessage(), Arrays.toString(e.getStackTrace()));
+    }
 }

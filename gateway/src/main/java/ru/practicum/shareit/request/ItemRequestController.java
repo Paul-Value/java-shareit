@@ -24,14 +24,15 @@ public class ItemRequestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Validated(Marker.Create.class)
-    public ResponseEntity<Object> create(@RequestHeader(UserIdHttpHeader.USER_ID_HEADER) @Positive long requesterId,
+    public ResponseEntity<Object> create(@RequestHeader(name = UserIdHttpHeader.USER_ID_HEADER) @Positive long requesterId,
                                          @Valid @RequestBody ItemRequestDto itemRequestDto) {
         log.info("Create request: {}", itemRequestDto);
-        return itemRequestClient.create(requesterId, itemRequestDto);
+        return itemRequestClient.create(itemRequestDto, requesterId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> findAllByRequester(@RequestHeader(UserIdHttpHeader.USER_ID_HEADER) @Positive long requesterId) {
+    public ResponseEntity<Object> findAllByRequester(@RequestHeader(name = UserIdHttpHeader.USER_ID_HEADER)
+                                                     @Positive long requesterId) {
         log.info("Find all requests by requester: {}", requesterId);
         return itemRequestClient.findAllByRequester(requesterId);
     }

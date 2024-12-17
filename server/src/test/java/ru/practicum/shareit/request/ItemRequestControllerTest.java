@@ -34,11 +34,11 @@ class ItemRequestControllerTest {
     private final String requestHeader = "X-Sharer-User-Id";
     String baseUri = "/requests";
     private Long id = 1L;
-    private long requestorId = 1L;
+    private long requesterId = 1L;
     private String description = "description";
     private LocalDateTime created = LocalDateTime.now();
     private ItemRequestDto requestDto1 = ItemRequestDto.builder()
-            .requesterId(requestorId)
+            .requesterId(requesterId)
             .description(description)
             .created(created)
             .items(List.of())
@@ -55,7 +55,7 @@ class ItemRequestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(requestHeader, requestorId);
+                .header(requestHeader, requesterId);
     }
 
     MockHttpServletRequestBuilder setRequestHeadersWithoutBody(MockHttpServletRequestBuilder builder) throws JsonProcessingException {
@@ -63,13 +63,13 @@ class ItemRequestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
-                .header(requestHeader, requestorId);
+                .header(requestHeader, requesterId);
     }
 
     @BeforeEach
     void setUp() {
         request1.setId(id);
-        request1.setRequesterId(requestorId);
+        request1.setRequesterId(requesterId);
         request1.setDescription(description);
         request1.setCreated(created);
         request1.setItems(List.of());
@@ -82,7 +82,7 @@ class ItemRequestControllerTest {
 
     @Test
     void findAllByRequester() throws Exception {
-        performMvc(setRequestHeadersWithoutBody(get(baseUri + "/" + requestorId))).andExpect(status().isOk());
+        performMvc(setRequestHeadersWithoutBody(get(baseUri + "/" + requesterId))).andExpect(status().isOk());
     }
 
     @Test
@@ -92,6 +92,6 @@ class ItemRequestControllerTest {
 
     @Test
     void findById() throws Exception {
-        performMvc(setRequestHeadersWithoutBody(get(baseUri + "/" + requestorId))).andExpect(status().isOk());
+        performMvc(setRequestHeadersWithoutBody(get(baseUri + "/" + requesterId))).andExpect(status().isOk());
     }
 }

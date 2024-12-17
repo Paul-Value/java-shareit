@@ -28,6 +28,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDto save(BookingCreateDto dto) {
+        userService.isExists(dto.getBookerId());
         ItemDto itemDto = itemService.get(dto.getBookerId(), dto.getItemId());
         if (!itemDto.getAvailable()) {
             throw new UnavailableItemException(String.format("Item with id %d not available", itemDto.getId()));

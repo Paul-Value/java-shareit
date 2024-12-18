@@ -67,6 +67,31 @@ class ItemMapperTest {
     }
 
     @Test
+    void modelToDtoWithNullComments() {
+        UserDto userDto = new UserDto();
+        userDto.setId(1L);
+        userDto.setName("afqvv");
+        userDto.setEmail("afqvv@gmail.com");
+
+        List<CommentResponseDto> listCommentDtoResponses = List.of();
+        Map<String, BookingDto> bookingDtoMap = new HashMap<>();
+        bookingDtoMap.put("lastBooking", null);
+        bookingDtoMap.put("nextBooking", null);
+        ItemCommentsDtoResponse result = ItemMapper.modelToDtoWithComments(model, listCommentDtoResponses, bookingDtoMap);
+
+        assertNotNull(result);
+        assertEquals(result.getId(), model.getId());
+        assertEquals(result.getName(), model.getName());
+        assertEquals(result.getDescription(), model.getDescription());
+        assertEquals(result.getAvailable(), model.getAvailable());
+        assertEquals(result.getOwnerId(), model.getOwnerId());
+        assertEquals(result.getComments(), listCommentDtoResponses);
+        assertEquals(result.getLastBooking(), bookingDtoMap.get("lastBooking"));
+        assertEquals(result.getNextBooking(), bookingDtoMap.get("nextBooking"));
+        assertEquals(result.getRequestId(), model.getRequestId());
+    }
+
+    @Test
     void modelFeedbackToDtoFeedback() {
         ItemForRequestDto forRequestDto = ItemForRequestDto.builder()
                 .id(model.getId())

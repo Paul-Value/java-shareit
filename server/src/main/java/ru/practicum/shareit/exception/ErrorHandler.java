@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler({MethodArgumentNotValidException.class, NotStartedBookingException.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ValidationErrorResponse methodArgumentNotValidException(MethodArgumentNotValidException e) {

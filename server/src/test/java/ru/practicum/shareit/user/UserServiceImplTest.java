@@ -1,10 +1,13 @@
 package ru.practicum.shareit.user;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.practicum.shareit.exception.AlreadyExistException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
@@ -116,5 +119,27 @@ class UserServiceImplTest {
         assertEquals(1L, userDto.getId());
 
         verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    void shouldByIdNotExists() {
+        long id = 2L;
+        when(userRepository.existsById(id))
+                .thenReturn(false);
+
+        final NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> userService.isExists(id));
+
+        assertEquals("User with id: " + id + " not found", exception.getMessage());
+    }
+
+    @Test
+    void shouldByEmailNotExists() {
+        String email = "test@test.com";
+        when(userRepository.existsByUserEmail(email))
+                .thenReturn(true);
+
+        final AlreadyExistException exception = Assertions.assertThrows(AlreadyExistException.class, () -> userService.isExists(email));
+
+        assertEquals("Email = " + email + " already exists", exception.getMessage());
     }
 }

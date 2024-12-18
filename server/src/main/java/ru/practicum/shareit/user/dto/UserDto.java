@@ -1,10 +1,10 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Data
+@EqualsAndHashCode
+@ToString
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class UserDto {

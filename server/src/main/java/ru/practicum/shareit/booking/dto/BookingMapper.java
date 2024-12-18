@@ -31,12 +31,4 @@ public class BookingMapper {
         dto.setStatus(model.getStatus());
         return dto;
     }
-
-    public static BookingShortDto modelToShortDto(Booking model) {
-        BookingShortDto dto = new BookingShortDto();
-        dto.setId(model.getId());
-        dto.setStart(model.getStart());
-        dto.setEnd(model.getEnd());
-        return dto;
-    }
 }

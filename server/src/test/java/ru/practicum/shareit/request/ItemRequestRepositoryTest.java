@@ -58,12 +58,12 @@ class ItemRequestRepositoryTest {
 
         request2.setDescription(description2);
         request2.setRequesterId(requestorId2);
-        request2.setCreated(LocalDateTime.now());
+        request2.setCreated(LocalDateTime.now().plusHours(1));
         em.persist(request2);
 
         request3.setDescription(description3);
         request3.setRequesterId(requestorId3);
-        request3.setCreated(LocalDateTime.now());
+        request3.setCreated(LocalDateTime.now().minusHours(2));
         em.persist(request3);
     }
 

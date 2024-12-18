@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.exception.NotValidException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -356,6 +357,32 @@ class ItemServiceImplTest {
 
         verify(commentRepository, times(1))
                 .save(any());
+    }
+
+    @Test
+    void commentFutureBooking() {
+        String textComment = "comment";
+        Long authorId = 1L;
+        Long itemId = 1L;
+        LocalDateTime now = LocalDateTime.now();
+        CommentCreateDto commentDtoCreate = new CommentCreateDto();
+        commentDtoCreate.setText(textComment);
+        commentDtoCreate.setCreated(now);
+
+        User booker = new User(1L, "test", "test");
+
+        Booking booking1 = new Booking();
+        booking1.setId(1L);
+        booking1.setStart(now.plusHours(1));
+        booking1.setEnd(now.plusHours(2));
+        booking1.setItem(itemModel);
+        booking1.setBooker(booker);
+        List<Booking> list = List.of(booking1);
+
+        when(bookingRepository.findByBookerIdAndItemIdOrderByStart(authorId, itemId))
+                .thenReturn(list);
+
+        assertThrows(NotValidException.class, () -> itemService.createComment(commentDtoCreate, authorId, itemId));
     }
 
     @Test

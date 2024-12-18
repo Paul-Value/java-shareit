@@ -18,13 +18,6 @@ public class CommentMapper {
         return dto;
     }
 
-    public static CommentShortDto modelToShortDto(Comment comment) {
-        CommentShortDto dto = new CommentShortDto();
-        dto.setId(comment.getId());
-        dto.setText(comment.getText());
-        return dto;
-    }
-
     public Comment dtoToModel(CommentCreateDto dto) {
         Comment comment = new Comment();
         comment.setText(dto.getText());
